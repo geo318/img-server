@@ -3,7 +3,13 @@
   "module": "index.tsx",
   "type": "module",
   "scripts": {
-    "start": "bun --watch run server.ts"
+    "dev": "bun --watch run server.ts",
+    "start": "bun build/server.js",
+    "build": "bun build ./server.ts --outdir ./build",
+    "migrate": "drizzle-kit generate:pg",
+    "db:migrate": "node -r esbuild-register db/migrate.js",
+    "db:push": "drizzle-kit push:pg",
+    "migrations:drop": "drizzle-kit drop --config=drizzle.config.ts"
   },
   "devDependencies": {
     "@types/bun": "^1.0.8",
