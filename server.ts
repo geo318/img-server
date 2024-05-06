@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import env from './env'
+import { homeRouter } from './routes'
 
 const server = express()
 
@@ -13,6 +14,7 @@ server.use(
 )
 server.use(bodyParser.json())
 server.use(express.static('assets/images'))
+server.use(homeRouter)
 
 const port = env.PORT
 
