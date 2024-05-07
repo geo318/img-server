@@ -21,7 +21,7 @@ export const img = pgTable('images', {
 
 export const api = pgTable('apis', {
   id: serial('id').primaryKey(),
-  secret: uuid('secret').notNull().unique(),
+  secret: text('secret').notNull().unique(),
   name: text('name').notNull(),
   user_id: integer('user_id')
     .references(() => user.id)

@@ -1,5 +1,6 @@
 export const ROUTES = {
   index: '/',
+  api: '/api',
   asset: '/asset',
   login: '/login',
   logout: '/logout',
