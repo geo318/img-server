@@ -14,7 +14,7 @@ export const imgRelations = relations(img, ({ one }) => ({
 }))
 
 export const apiRelations = relations(api, ({ one }) => ({
-  user: one(user, {
+  api: one(user, {
     fields: [api.user_id],
     references: [user.id],
   }),
