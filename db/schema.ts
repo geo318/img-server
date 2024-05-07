@@ -1,4 +1,4 @@
-import { serial, text, pgTable, integer } from 'drizzle-orm/pg-core'
+import { serial, text, pgTable, integer, uuid } from 'drizzle-orm/pg-core'
 
 export const user = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -17,4 +17,13 @@ export const img = pgTable('images', {
     .references(() => user.id)
     .notNull(),
   folder: text('folder').notNull(),
+})
+
+export const api = pgTable('apis', {
+  id: serial('id').primaryKey(),
+  secret: uuid('secret').notNull().unique(),
+  name: text('name').notNull(),
+  user_id: integer('user_id')
+    .references(() => user.id)
+    .notNull(),
 })

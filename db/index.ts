@@ -14,3 +14,5 @@ const connection = new Pool({
 
 const db = drizzle(connection, { schema: { ...schema, ...relations } })
 export { db, connection }
+export * from './schema'
+export * from './relations'
