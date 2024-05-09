@@ -1,7 +1,8 @@
 import express from 'express'
 import { ROUTES } from '/config'
 import { api, db } from '/db'
-import crypto from 'crypto'
+import { sql } from 'drizzle-orm'
+import { insertApiTokenSchema } from '/schema'
 
 const router = express.Router()
 
@@ -11,21 +12,22 @@ router.get(ROUTES.api, async (_, res) => {
 })
 
 router.post(ROUTES.api, async (req, res) => {
-  const { name, user_id } = req.body
-  //implement zod validation here
-
-  const secret = crypto.randomBytes(8).toString('hex')
   try {
-    await db
-      .insert(api)
-      .values({
-        name,
-        secret,
-        user_id,
-      })
-      .execute()
+    const { name, user_id, secret } = insertApiTokenSchema.parse(req.body)
+    const names = await db.execute(
+      sql`SELECT name FROM apis WHERE user_id = ${user_id}`
+    )
 
-    res.send('token created')
+    if (names.rows.some((n) => n?.['name'] === name)) {
+      res
+        .status(400)
+        .send({ error: 'Api with this name already exists, choose another' })
+      return
+    }
+    await db.execute(
+      sql`INSERT INTO apis (name, secret, user_id) VALUES (${name}, ${secret}, ${user_id})`
+    )
+    res.send('new api token created')
   } catch (error) {
     res.status(500).send(JSON.stringify(error))
   }

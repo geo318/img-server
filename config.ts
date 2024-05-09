@@ -1,7 +1,8 @@
 export const ROUTES = {
   index: '/',
   api: '/api',
-  asset: '/asset',
+  assets: '/assets',
+  image: '/assets/:imgSlug',
   login: '/login',
   logout: '/logout',
   register: '/register',
