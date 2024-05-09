@@ -1,7 +1,5 @@
 import express, { type Request, type Response } from 'express'
 import { ROUTES } from '/config'
-import { img, db } from '/db'
-import crypto from 'crypto'
 import multer from 'multer'
 import { addNewImage } from '/utils'
 
@@ -36,28 +34,6 @@ router.get(ROUTES.image, async (req, res) => {
   const width = params.get('width')
   const height = params.get('height')
   res.send(JSON.stringify([name, folder, width, height]))
-})
-
-router.post(ROUTES.assets, async (req, res) => {
-  const { name, user_id } = req.body
-  //implement zod validation here
-
-  const secret = crypto.randomBytes(8).toString('hex')
-  try {
-    await db
-      .insert(img)
-      .values({
-        alt: name,
-        url: `${ROUTES.assets}/${name}`,
-        user_id,
-        folder: name,
-      })
-      .execute()
-
-    res.send('token created')
-  } catch (error) {
-    res.status(500).send(JSON.stringify(error))
-  }
 })
 
 export default router

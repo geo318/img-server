@@ -176,5 +176,5 @@ dist
 
 prod/
 db/drizzle/
-assets/images/
+assets/images
 public/

@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import env from './env'
-import { apiRouter, homeRouter, imgRouter } from './routes'
+import { apiRouter, authRouter, homeRouter, imgRouter } from './routes'
 
 const server = express()
 
@@ -22,6 +22,7 @@ server.use(express.static('assets/images'))
 server.use(homeRouter)
 server.use(apiRouter)
 server.use(imgRouter)
+server.use(authRouter)
 const port = env.PORT
 
 server.listen(port, () => console.log(`Server started on port ${port}`))

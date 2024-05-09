@@ -7,8 +7,8 @@ import { insertApiTokenSchema } from '/schema'
 const router = express.Router()
 
 router.get(ROUTES.api, async (_, res) => {
-  const newUser = await db.select().from(api).execute()
-  res.send(JSON.stringify(newUser))
+  const userTokens = await db.select().from(api)
+  res.send(JSON.stringify(userTokens))
 })
 
 router.post(ROUTES.api, async (req, res) => {
