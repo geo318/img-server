@@ -38,4 +38,9 @@ router.post(ROUTES.register, async (req, res) => {
   }
 })
 
+router.post(ROUTES.login, async (req, res) => {
+  const { email, password } = req.body
+  res.send({ email, password })
+})
+
 export default router
