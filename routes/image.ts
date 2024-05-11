@@ -2,6 +2,8 @@ import express, { type Request, type Response } from 'express'
 import { ROUTES } from '/config'
 import multer from 'multer'
 import { addNewImage } from '/utils'
+import { db } from '/db'
+import { z } from 'zod'
 
 const router = express.Router()
 
@@ -15,16 +17,29 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 },
 })
 
-router.post(ROUTES.assets, upload.single('img'), (req: Request, res: Response) => {
-  const image = req.file
-  if (!image) {
-    res.status(400).send('No file uploaded.')
-    return
+router.post(
+  ROUTES.assets,
+  upload.single('img'),
+  async (req: Request, res: Response) => {
+    const secret = z.string().regex(/.{16}/).parse(req.body.secret)
+    const userWithSecret = await db.query.api.findFirst({
+      where: (api, { eq }) => eq(api.secret, secret),
+      with: {
+        user: true,
+      },
+    })
+    const image = req.file
+    if (!image) {
+      res.status(400).send('No file uploaded.')
+      return
+    }
+    const imagePaths = addNewImage(
+      image,
+      `${userWithSecret?.user.folder}/${userWithSecret?.name}`
+    )
+    res.send(imagePaths)
   }
-
-  const imagePaths = addNewImage(image)
-  res.send(imagePaths)
-})
+)
 
 router.get(ROUTES.image, async (req, res) => {
   const params = new URLSearchParams(req.url.split('?')[1])

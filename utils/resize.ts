@@ -56,7 +56,7 @@ export default class SharpResize {
         if (err) return `Error resizing image ${err}`
       }
     )
-    this.paths[this.subFolder || this.index] = `/${this.subFolder}/${this.name}`
+    this.paths.push(`/${this.subFolder}/${this.name}`)
   }
 
   fullFilePath() {
@@ -71,7 +71,5 @@ export default class SharpResize {
   private ext
   private name
   private index: number = 0
-  private paths: {
-    [key: string | number]: string
-  } = {}
+  private paths: string[] = []
 }

@@ -43,7 +43,7 @@ router.post(
       await db.execute(
         sql`INSERT INTO apis (name, secret, user_id) VALUES (${name}, ${secret}, ${user.id})`
       )
-      res.send('new api token created')
+      res.send(secret)
     } catch (error) {
       res.status(500).send(JSON.stringify(error))
     }

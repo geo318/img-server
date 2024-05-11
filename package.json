@@ -6,9 +6,8 @@
     "dev": "bun --watch run server.ts",
     "start": "bun prod/server.js",
     "build": "bun build server.ts --target=bun --outdir=prod",
-    "migrate": "drizzle-kit generate:pg",
-    "db:migrate": "node -r esbuild-register db/migrate.js",
-    "db:push": "drizzle-kit push:pg",
+    "migrate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
     "migrations:drop": "drizzle-kit drop --config=drizzle.config.ts",
     "generate:secret": "openssl rand -hex 32"
   },

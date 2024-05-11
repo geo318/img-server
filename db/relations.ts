@@ -2,7 +2,7 @@ import { relations } from 'drizzle-orm'
 import { user, img, api } from './schema'
 
 export const userRelations = relations(user, ({ many }) => ({
-  posts: many(img),
+  images: many(img),
   apis: many(api),
 }))
 
@@ -14,7 +14,7 @@ export const imgRelations = relations(img, ({ one }) => ({
 }))
 
 export const apiRelations = relations(api, ({ one }) => ({
-  api: one(user, {
+  user: one(user, {
     fields: [api.user_id],
     references: [user.id],
   }),
