@@ -1,12 +1,14 @@
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-import env from './env'
-import { apiRouter, authRouter, homeRouter, imgRouter } from './routes'
+import env from '/env'
+import routes from '/routes'
+import passport from 'passport'
+import '/middleware'
 
 const server = express()
 
-server.use(bodyParser.json());
+server.use(bodyParser.json())
 server.use(
   bodyParser.urlencoded({
     extended: true,
@@ -18,11 +20,9 @@ server.use(
     credentials: true,
   })
 )
-server.use(express.static('assets/images'))
-server.use(homeRouter)
-server.use(apiRouter)
-server.use(imgRouter)
-server.use(authRouter)
-const port = env.PORT
 
+server.use(express.static('assets/images'))
+server.use(routes)
+
+const port = env.PORT
 server.listen(port, () => console.log(`Server started on port ${port}`))

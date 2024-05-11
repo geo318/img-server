@@ -5,6 +5,10 @@ import { ZodError } from 'zod'
 import { db, user } from '/db'
 import { DrizzleError } from 'drizzle-orm'
 import { DatabaseError } from 'pg'
+import passport from 'passport'
+import jwt from 'jsonwebtoken'
+import env from '/env'
+import { hashString } from '/utils'
 
 const router = express.Router()
 
@@ -16,10 +20,12 @@ router.post(ROUTES.register, async (req, res) => {
       .values({
         ...newUser,
         folder: newUser.name.replace(/\s/g, '-'),
+        password: hashString(newUser.password),
       })
       .execute()
     res.send({ message: 'Registered successfully', newUser })
   } catch (error) {
+    console.log(error)
     if (error instanceof ZodError) {
       res.status(400).send({ error: error.issues })
     }
@@ -34,13 +40,19 @@ router.post(ROUTES.register, async (req, res) => {
     if (error instanceof DrizzleError) {
       res.status(400).send({ error: error.message })
     }
-    res.status(400).send({ error })
+    res.status(400).send(JSON.stringify(error))
   }
 })
 
-router.post(ROUTES.login, async (req, res) => {
-  const { email, password } = req.body
-  res.send({ email, password })
-})
+router.post(
+  '/login',
+  passport.authenticate('local', { session: false }),
+  (req, res) => {
+    const { email } = req.body
+    const token = jwt.sign({ username: email }, env.SECRET)
+
+    res.json({ token })
+  }
+)
 
 export default router

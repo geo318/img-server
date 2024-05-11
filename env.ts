@@ -7,6 +7,7 @@ const envSchema = z.object({
   DB_PASSWORD: z.string(),
   DB_NAME: z.string(),
   DB_PORT: z.string().default('5432'),
+  SECRET: z.string().length(64),
 })
 
 const envVariables = envSchema.parse(process.env)
