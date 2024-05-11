@@ -8,6 +8,7 @@ import '/middleware'
 
 const server = express()
 
+server.use(passport.initialize())
 server.use(bodyParser.json())
 server.use(
   bodyParser.urlencoded({

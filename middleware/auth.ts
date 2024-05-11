@@ -1,8 +1,10 @@
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
 import { db } from '/db'
 import type { User } from '/types'
 import { hashString } from '/utils'
+import env from '/env'
 
 passport.use(
   new LocalStrategy(
@@ -19,6 +21,27 @@ passport.use(
         if (!passwordMatch) done(null, false, { message: 'Incorrect password' })
 
         done(null, authUser)
+      } catch (error) {
+        done(error, false)
+      }
+    }
+  )
+)
+
+passport.use(
+  new JwtStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: env.SECRET,
+    },
+    async (jwtPayload: string, done) => {
+      try {
+        const user = db.query.user
+          .findFirst({
+            where: (user, { eq }) => eq(user.id, Number(jwtPayload.sub)),
+          })
+          .execute()
+        done(null, user)
       } catch (error) {
         done(error, false)
       }

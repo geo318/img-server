@@ -3,13 +3,18 @@ import { ROUTES } from '/config'
 import { api, db } from '/db'
 import { sql } from 'drizzle-orm'
 import { insertApiTokenSchema } from '/schema'
+import passport from 'passport'
 
 const router = express.Router()
 
-router.get(ROUTES.api, async (_, res) => {
-  const userTokens = await db.select().from(api)
-  res.send(JSON.stringify(userTokens))
-})
+router.get(
+  ROUTES.api,
+  passport.authenticate('jwt', { session: false }),
+  async (_, res) => {
+    const userTokens = await db.select().from(api)
+    res.send(JSON.stringify(userTokens))
+  }
+)
 
 router.post(ROUTES.api, async (req, res) => {
   try {
