@@ -34,11 +34,11 @@ passport.use(
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: env.SECRET,
     },
-    async (jwtPayload: string, done) => {
+    async (jwtPayload: { username: string }, done) => {
       try {
-        const user = db.query.user
+        const user = await db.query.user
           .findFirst({
-            where: (user, { eq }) => eq(user.id, Number(jwtPayload.sub)),
+            where: (user, { eq }) => eq(user.email, String(jwtPayload.username)),
           })
           .execute()
         done(null, user)
@@ -54,6 +54,7 @@ passport.serializeUser((user: Partial<User>, done) => {
 })
 
 passport.deserializeUser(async (id: string, done) => {
+  console.log('deid', id)
   try {
     const authUser = await db.query.user.findFirst({
       where: (user, { eq }) => eq(user.id, Number(id)),

@@ -25,7 +25,6 @@ router.post(ROUTES.register, async (req, res) => {
       .execute()
     res.send({ message: 'Registered successfully', newUser })
   } catch (error) {
-    console.log(error)
     if (error instanceof ZodError) {
       res.status(400).send({ error: error.issues })
     }

@@ -23,7 +23,6 @@ router.post(ROUTES.assets, upload.single('img'), (req: Request, res: Response) =
   }
 
   const imagePaths = addNewImage(image)
-  console.log(imagePaths, image)
   res.send(imagePaths)
 })
 
