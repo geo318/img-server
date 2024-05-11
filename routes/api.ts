@@ -2,9 +2,8 @@ import express from 'express'
 import { ROUTES } from '/config'
 import { db } from '/db'
 import { sql } from 'drizzle-orm'
-import { insertApiTokenSchema } from '/schema'
-import passport, { use } from 'passport'
-import type { User } from '/types'
+import { insertApiTokenSchema, selectUserSchema } from '/schema'
+import passport from 'passport'
 
 const router = express.Router()
 
@@ -12,15 +11,15 @@ router.get(
   ROUTES.api,
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    const user = req.user as User
-    if (!user) {
-      res.status(401).send('Unauthorized')
-      return
+    try {
+      const user = selectUserSchema.parse(req.user)
+      const userTokens = await db.query.api.findMany({
+        where: (api, { eq }) => eq(api.user_id, user.id),
+      })
+      res.send(JSON.stringify({ userTokens }))
+    } catch (error) {
+      res.status(500).send(JSON.stringify(error))
     }
-    const userTokens = await db.query.api.findMany({
-      where: (api, { eq }) => eq(api.user_id, user.id),
-    })
-    res.send(JSON.stringify({ userTokens, user: req.user }))
   }
 )
 
@@ -28,12 +27,8 @@ router.post(
   ROUTES.api,
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    const user = req.user as User
-    if (!user) {
-      res.status(401).send('Unauthorized')
-      return
-    }
     try {
+      const user = selectUserSchema.parse(req.user)
       const { name, secret } = insertApiTokenSchema.parse(req.body)
       const names = await db.execute(
         sql`SELECT name FROM apis WHERE user_id = ${user.id}`

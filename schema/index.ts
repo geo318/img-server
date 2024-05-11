@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { user } from '/db'
 import { passwordSchema } from './shared'
-import { createInsertSchema } from 'drizzle-zod'
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import crypto from 'crypto'
 
 export const insertApiTokenSchema = z.object({
@@ -15,3 +15,5 @@ export const userSchema = createInsertSchema(user, {
   password: passwordSchema,
   folder: z.string().optional(),
 })
+
+export const selectUserSchema = createSelectSchema(user)
