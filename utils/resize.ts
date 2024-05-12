@@ -6,7 +6,7 @@ export default class SharpResize {
   constructor(
     file: Express.Multer.File,
     rootFolder: string,
-    ext?: keyof FormatEnum | AvailableFormatInfo,
+    ext: keyof FormatEnum | AvailableFormatInfo,
     subFolder?: string,
     name?: string,
     width?: number,
@@ -33,10 +33,17 @@ export default class SharpResize {
     )
   }
 
-  reformat(format?: typeof this.ext, width?: number, height?: number) {
+  reformat(
+    format = this.ext,
+    width?: number,
+    height?: number
+  ) {
+    this.name = this.name.replace(/\.\w+$/, `.${format}`)
     return this.resize(width, height)
-      .toFormat(format || this.ext || 'webp')
-      .webp({ quality: 100, force: true })
+      .toFormat(format, {
+        force: true,
+      })
+      .webp({ quality: 90, force: true })
   }
 
   save(
