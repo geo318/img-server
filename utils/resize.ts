@@ -8,7 +8,7 @@ export default class SharpResize {
     rootFolder: string,
     ext: keyof FormatEnum | AvailableFormatInfo,
     subFolder?: string,
-    name?: string,
+    name = 'image.webp',
     width?: number,
     height?: number
   ) {
@@ -18,12 +18,17 @@ export default class SharpResize {
     this.width = width
     this.height = height
     this.ext = ext
-    this.name = name || this.file.originalname.trim().replace(/\s/g, '-')
+    this.name = name
     this.index++
   }
 
   private sharper() {
-    return sharp(this.file.path)
+    const file = this.file
+    if ('buffer' in file && file.buffer instanceof Buffer) {
+      return sharp(Buffer.from(file.buffer))
+    } else {
+      return sharp(file.path)
+    }
   }
 
   resize(width?: number, height?: number) {
@@ -43,23 +48,26 @@ export default class SharpResize {
   }
 
   save(
-    subFolder?: string,
+    subSubFolder = this.index.toString(),
     width?: number,
     height?: number,
     format?: typeof this.ext
   ) {
-    this.subFolder = subFolder || this.index.toString()
-    const dir = `./${this.rootFolder}/${this.subFolder || this.index}`
+    this.subFolder ??= subSubFolder
 
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+    const dir = `${this.rootFolder}/${this.subFolder}/${subSubFolder}`
 
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(`./${dir}`, { recursive: true })
+    }
     this.reformat(format, width, height).toFile(
-      path.join(dir, this.name),
+      path.join(dir, this.name || 'name'),
       (err) => {
         if (err) return `Error resizing image ${err}`
       }
     )
-    this.paths[this.subFolder || this.index] = `/${this.subFolder}/${this.name}`
+
+    this.paths[subSubFolder] = `/${this.subFolder}/${subSubFolder}/${this.name}`
   }
 
   fullFilePath() {

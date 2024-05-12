@@ -8,6 +8,8 @@ const envSchema = z.object({
   DB_NAME: z.string(),
   DB_PORT: z.string().default('5432'),
   SECRET: z.string().length(64),
+  UPSTASH_REDIS_URL: z.string(),
+  UPSTASH_REDIS_TOKEN: z.string(),
 })
 
 const envVariables = envSchema.parse(process.env)

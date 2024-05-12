@@ -35,8 +35,9 @@ router.post(
 
       let imagePaths = []
       for (const img of images) {
+        
         const dest = `${userWithSecret?.user.folder}/${userWithSecret?.name}`
-        const fullPath = addNewImage(img, dest)
+        const fullPath = await addNewImage(img, dest)
         imagePaths.push(fullPath)
       }
 
@@ -54,6 +55,7 @@ router.post(
 )
 
 router.get(ROUTES.image, async (req, res) => {
+  console.log(req.url)
   const params = new URLSearchParams(req.url.split('?')[1])
   const name = req.url.split('/').at(-1)?.split('?')[0]
   const folder = params.get('id')
