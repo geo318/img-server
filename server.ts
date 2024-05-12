@@ -4,7 +4,7 @@ import bodyParser from 'body-parser'
 import env from '/env'
 import routes from '/routes'
 import passport from 'passport'
-import '/middleware'
+import '/middleware/auth'
 
 const server = express()
 

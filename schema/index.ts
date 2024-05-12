@@ -4,6 +4,8 @@ import { passwordSchema } from './shared'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import crypto from 'crypto'
 
+export * from './shared'
+
 export const insertApiTokenSchema = z.object({
   name: z.string(),
   secret: z.string().nullish().default(crypto.randomBytes(8).toString('hex')),

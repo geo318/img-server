@@ -1,5 +1,5 @@
 export { default as resizeImage } from './resize'
-import { resizeImage } from '.'
+import { resizeImage } from '/utils'
 import crypto from 'crypto'
 import env from '/env'
 
