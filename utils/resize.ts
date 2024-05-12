@@ -2,7 +2,7 @@ import sharp, { type AvailableFormatInfo, type FormatEnum } from 'sharp'
 import path from 'path'
 import fs from 'fs'
 
-export default class SharpResize {
+export default class SharpResize<TFolder extends string = string> {
   constructor(
     file: Express.Multer.File,
     rootFolder: string,
@@ -24,7 +24,7 @@ export default class SharpResize {
 
   private sharper() {
     const file = this.file
-    if ('buffer' in file && file.buffer instanceof Buffer) {
+    if (file.buffer instanceof Buffer) {
       return sharp(Buffer.from(file.buffer))
     } else {
       return sharp(file.path)
@@ -48,7 +48,7 @@ export default class SharpResize {
   }
 
   save(
-    subSubFolder = this.index.toString(),
+    subSubFolder = this.index.toString() as TFolder,
     width?: number,
     height?: number,
     format?: typeof this.ext
@@ -58,10 +58,11 @@ export default class SharpResize {
     const dir = `${this.rootFolder}/${this.subFolder}/${subSubFolder}`
 
     if (!fs.existsSync(dir)) {
-      fs.mkdirSync(`./${dir}`, { recursive: true })
+      fs.mkdirSync(`.${dir}`, { recursive: true })
     }
+    
     this.reformat(format, width, height).toFile(
-      path.join(dir, this.name || 'name'),
+      path.join(dir.slice(1), this.name || 'name'),
       (err) => {
         if (err) return `Error resizing image ${err}`
       }
@@ -82,5 +83,5 @@ export default class SharpResize {
   private ext
   private name
   private index = 0
-  private paths: Record<string, string> = {}
+  private paths = {} as Record<TFolder, string>
 }

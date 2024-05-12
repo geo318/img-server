@@ -22,7 +22,6 @@ server.use(
   })
 )
 
-server.use(express.static('assets/images'))
 server.use(routes)
 
 const port = env.PORT

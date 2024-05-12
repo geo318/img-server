@@ -3,14 +3,18 @@ import { resizeImage } from '/utils'
 import crypto from 'crypto'
 import env from '/env'
 import getSize from 'image-size'
+import { ROUTES } from '/config'
 
-export const addNewImage = async (image: Express.Multer.File, userFolder: string) => {
-  let [name, ext] = image.originalname.trim().replace(/\s/g, '-').split(/\./)
+export const addNewImage = async (
+  image: Express.Multer.File,
+  userFolder: string
+) => {
+  let [name, ext] = image.originalname.trim().replace(/\s/g, '-').split(/\.$/)
   name = `${name}-${new Date().getTime()}.${ext}`
 
-  const imageToResize = new resizeImage(
+  const imageToResize = new resizeImage<'full' | 'thumb'>(
     image,
-    'assets/images',
+    ROUTES.getStaticDir(),
     'webp',
     userFolder,
     name
