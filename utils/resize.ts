@@ -33,11 +33,7 @@ export default class SharpResize {
     )
   }
 
-  reformat(
-    format = this.ext,
-    width?: number,
-    height?: number
-  ) {
+  reformat(format = this.ext, width?: number, height?: number) {
     this.name = this.name.replace(/\.\w+$/, `.${format}`)
     return this.resize(width, height)
       .toFormat(format, {
@@ -63,7 +59,7 @@ export default class SharpResize {
         if (err) return `Error resizing image ${err}`
       }
     )
-    this.paths.push(`/${this.subFolder}/${this.name}`)
+    this.paths[this.subFolder || this.index] = `/${this.subFolder}/${this.name}`
   }
 
   fullFilePath() {
@@ -77,6 +73,6 @@ export default class SharpResize {
   private width
   private ext
   private name
-  private index: number = 0
-  private paths: string[] = []
+  private index = 0
+  private paths: Record<string, string> = {}
 }
