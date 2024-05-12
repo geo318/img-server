@@ -38,6 +38,7 @@ router.post(
       const images = imgSchemaArray.parse(req.files)
 
       let imagePaths = []
+      let imageValues = []
       for (const img of images) {
         const dest = `${userWithSecret?.user.folder}/${userWithSecret?.name}`
         const fullPath = await addNewImage(img, dest)
@@ -45,15 +46,15 @@ router.post(
         fullPath['thumb'] = `${ROUTES.img}${fullPath['thumb']}`
         imagePaths.push(fullPath)
 
-        // awaiting here would block the for loop and slow down the process
-        db.insert(image)
-          .values({
-            alt: img.originalname,
-            paths: fullPath,
-            user_id: userWithSecret.user.id,
-          })
-          .execute()
+        imageValues.push({
+          alt: img.originalname,
+          paths: fullPath,
+          user_id: userWithSecret.user.id,
+        })
       }
+      
+      // awaiting the execute method is not necessary not to block the event loop
+      db.insert(image).values(imageValues).execute()
 
       res.send(imagePaths)
     } catch (error) {
