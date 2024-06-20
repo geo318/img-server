@@ -2,6 +2,7 @@ export const ROUTES = {
   index: '/',
   api: '/api',
   img: '/img',
+  images: '/images',
   login: '/login',
   logout: '/logout',
   assets: '/assets',

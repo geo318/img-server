@@ -52,7 +52,7 @@ router.post(
           user_id: userWithSecret.user.id,
         })
       }
-      
+
       // awaiting the execute method is not necessary not to block the event loop
       db.insert(image).values(imageValues).execute()
 
@@ -94,6 +94,30 @@ router.get(ROUTES.getCatchAllImgPath(), async (req, res) => {
 
     res.sendFile(imagePath)
   })
+})
+
+router.get(ROUTES.images, async (req, res) => {
+  try {
+    const secret = secretSchema.parse(req.query['secret'])
+
+    const userWithSecret = await db.query.api.findFirst({
+      where: (api, { eq }) => eq(api.secret, secret),
+      with: { user: true },
+    })
+
+    if (!userWithSecret) {
+      res.status(400).send({ error: 'Api secret you provided doesn`t exist' })
+      return
+    }
+
+    const images = await db.query.image.findMany({
+      where: (img, { eq }) => eq(img.user_id, userWithSecret.user.id),
+    })
+
+    res.send(images)
+  } catch (error) {
+    res.status(500).send(JSON.stringify(error))
+  }
 })
 
 export default router
